@@ -1,4 +1,5 @@
 import streamlit as st
+import time
 
 from src.methods import *
 from src.fetcher import *
@@ -47,11 +48,16 @@ def home():
     with plot_cols[1]:
         plot_general_bar(data, time_col='date',
                          value_col='cumulativeVolumeUSD',
-                         bar_col='dailyVolumeUSD', xtitle='Total Volume Traded', ytitle='Daily Volume USD', ylabel1='USD, $',
-                         ylabel2='', title='Total Volume Traded')
+                         bar_col='dailyVolumeUSD', xtitle='Total Volume Traded', ytitle='Daily Volume USD', ylabel1='Total Volume Traded (USD, $)',
+                         ylabel2='Daily Volume (USD, $)', title='Total Volume Traded')
     st.markdown('---')
     plot_cols = st.columns(2) 
     with plot_cols[0]:
         plot_bar_chart(composition_data, time_col='date',
                        column_name='weight', xaxis_title='', yaxis_title='Percent, %',
                        title='GLP Composition', annotate=None)
+
+    st.markdown('---')  
+    st.markdown(f"Last updated: {time.strftime('%Y-%m-%d %H:%M:%S')}")
+    if st.button("Reload Dashboard",key="reload"):
+        st.rerun()
