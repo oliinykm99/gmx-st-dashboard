@@ -12,3 +12,6 @@ The GMX V1 Dashboard is designed to provide insights and visualizations for the 
 - **Interactive Controls**: Allows users to adjust parameters and view updated results dynamically.
 - **Data Fetching**: Automatically fetches updated data at regular intervals.
 - **User-Friendly Interface**: Designed for ease of use and clarity in presenting complex data.
+
+
+# Screenshots
