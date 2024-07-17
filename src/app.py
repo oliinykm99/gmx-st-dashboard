@@ -1,8 +1,8 @@
 import streamlit as st
 
-from methods import *
-from fetcher import *
-from display import *
+from src.methods import *
+from src.fetcher import *
+from src.display import *
 
 
 def home():
