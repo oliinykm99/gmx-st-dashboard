@@ -1,4 +1,4 @@
-# GMX V1 Dashboard with Streamlit
+# GMX V1 Dashboard with Streamlit (Work in Progress)
 
 This project utilizes Streamlit to create an interactive dashboard for GMX V1 data analysis and visualization.
 
@@ -15,3 +15,4 @@ The GMX V1 Dashboard is designed to provide insights and visualizations for the 
 
 
 # Screenshots
+![Example Screenshot](data/example.png)
