@@ -5,10 +5,6 @@ __pycache__/
 # Python's virtual environment
 .venv/
 
-# Ignore input and output data folders
-raw-data/
-data/
-
 # Apple's Finder generated files
 .DS_Store
 
@@ -17,9 +13,6 @@ data/
 
 # DotEnv files
 .env
-
-# Sample credential files
-credentials.py
 
 # App Log file
 app.log
