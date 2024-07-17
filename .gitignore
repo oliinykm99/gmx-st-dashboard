@@ -1,0 +1,25 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Python's virtual environment
+.venv/
+
+# Ignore input and output data folders
+raw-data/
+data/
+
+# Apple's Finder generated files
+.DS_Store
+
+# Jupyter Notebook files
+*.ipynb
+
+# DotEnv files
+.env
+
+# Sample credential files
+credentials.py
+
+# App Log file
+app.log
