@@ -5,7 +5,6 @@ from src.methods import *
 from src.fetcher import *
 from src.display import *
 
-
 def home():
     st.set_page_config(page_title="GMX V1 - Dashboard",
                         page_icon="data/gmx_logo.png",
@@ -51,11 +50,31 @@ def home():
                          bar_col='dailyVolumeUSD', xtitle='Total Volume Traded', ytitle='Daily Volume USD', ylabel1='Total Volume Traded (USD, $)',
                          ylabel2='Daily Volume (USD, $)', title='Total Volume Traded')
     st.markdown('---')
-    plot_cols = st.columns(2) 
+    plot_cols = st.columns(3) 
     with plot_cols[0]:
         plot_bar_chart(composition_data, time_col='date',
                        column_name='weight', xaxis_title='', yaxis_title='Percent, %',
                        title='GLP Composition', annotate=None)
+    with plot_cols[1]:
+        plot_bar_chart(composition_data[['date','inflowUSD','name','symbol']], time_col='date',
+                       column_name='inflowUSD', xaxis_title='', yaxis_title='USD, $',
+                       title='Inflow By Token', annotate=None)
+    with plot_cols[2]:
+        plot_bar_chart(composition_data[['date','outflowUSD','name','symbol']], time_col='date',
+                       column_name='outflowUSD', xaxis_title='', yaxis_title='USD, $',
+                       title='Outflow By Token', annotate=None, legend=True)
+    
+    st.markdown('---')
+    plot_cols = st.columns(2)
+    with plot_cols[0]:
+        plot_percentage_bar_chart(data, time_col='date',
+                                 long_col='longPercentage', short_col='shortPercentage',
+                                 xaxis_title='', yaxis_title='Percent, %',
+                                 title='Open Interest Longs VS Shorts Weighting',
+                                 legend=True)
+    
+                       
+    
 
     st.markdown('---')  
     st.markdown(f"Last updated: {time.strftime('%Y-%m-%d %H:%M:%S')}")

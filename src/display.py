@@ -74,7 +74,7 @@ def plot_general_bar(df, time_col, value_col, bar_col, xtitle, ytitle, ylabel1, 
 
     st.plotly_chart(fig)
 
-def plot_bar_chart(df, time_col, column_name, xaxis_title, yaxis_title, title, annotate=None):
+def plot_bar_chart(df, time_col, column_name, xaxis_title, yaxis_title, title, annotate=None, legend=False):
     fig = px.bar(df, x='date', y=column_name, color='symbol', title=title, labels={column_name: yaxis_title, 'date': xaxis_title})
     fig.update_layout(
         hovermode='closest',
@@ -91,12 +91,53 @@ def plot_bar_chart(df, time_col, column_name, xaxis_title, yaxis_title, title, a
         ),
         title_font=dict(size=20),
         width=1600, 
-        height=550
+        height=550,
+        showlegend=legend
     )
     if annotate:
         wrapped_text = "<br>".join(textwrap.wrap(annotate, width=80))
         annotation = go.layout.Annotation(
             x=df['timestamp'].iloc[0],
+            y=1,  
+            xref='x',
+            yref='paper',  
+            text='Additional Information',
+            showarrow=False,
+            align='left',
+            xanchor='left',  
+            yanchor='bottom',  
+            hovertext=wrapped_text,
+            hoverlabel=dict(bgcolor="white", font_size=12)
+        )
+        fig.update_layout(annotations=[annotation])
+    st.plotly_chart(fig)
+
+def plot_percentage_bar_chart(df, time_col, long_col, short_col, xaxis_title, yaxis_title, title, annotate=None, legend=False):
+    df_melted = df.melt(id_vars=[time_col], value_vars=[long_col, short_col], var_name='PositionType', value_name='Percentage')
+    fig = px.bar(df_melted, x=time_col, y='Percentage', color='PositionType', title=title, labels={'Percentage': yaxis_title, time_col: xaxis_title})
+    fig.update_layout(
+        hovermode='closest',
+        plot_bgcolor='rgba(0,0,0,0)',
+        xaxis=dict(
+            showgrid=True,  
+            gridcolor='rgba(0,0,0,0.1)',  
+            gridwidth=1,
+            tickangle=-45, tickformat='%Y-%m-%d'
+        ),
+        yaxis=dict(
+            showgrid=True, 
+            gridcolor='rgba(0,0,0,0.1)', 
+            gridwidth=1
+        ),
+        title_font=dict(size=20),
+        width=1600, 
+        height=550,
+        showlegend=legend
+    )
+    if annotate:
+        wrapped_text = "<br>".join(textwrap.wrap(annotate, width=80))
+        annotation = go.layout.Annotation(
+            x=df[time_col].iloc[0],
             y=1,  
             xref='x',
             yref='paper',  

@@ -10,12 +10,12 @@ api = os.getenv("API_KEY")
 
 gmx_url = f'https://gateway-arbitrum.network.thegraph.com/api/{api}/subgraphs/id/DiR5cWwB3pwXXQWWdus7fDLR2mnFRQLiBFsVmHAH9VAs'
 
-@st.cache_data
+@st.cache_data(ttl=86400)
 def fetch_gmx_data():
     query = """
         {
     liquidityPoolDailySnapshots(
-        first: 1000
+        first: 500
         orderBy: timestamp
         orderDirection: desc
     ) {
@@ -36,15 +36,19 @@ def fetch_gmx_data():
     data = pd.DataFrame(data)
     data = data.apply(pd.to_numeric, errors='coerce')
     data['date'] = pd.to_datetime(data['timestamp'].astype(int), unit='s')
+    data['total'] = data['dailyLongOpenInterestUSD'] + data['dailyShortOpenInterestUSD']
+    data['longPercentage'] = (data['dailyLongOpenInterestUSD'] / data['total']) * 100
+    data['shortPercentage'] = (data['dailyShortOpenInterestUSD'] / data['total']) * 100
     data = data.sort_values(by='timestamp')
 
     return data
 
+@st.cache_data(ttl=86400)
 def fetch_gmx_composition_data():
     query = """
         {
       liquidityPoolDailySnapshots(
-        first: 1000
+        first: 365
         orderBy: timestamp
         orderDirection: desc
       ) {
@@ -52,9 +56,12 @@ def fetch_gmx_composition_data():
         inputTokens {
           name
           symbol
+          
           lastPriceUSD
         }
         inputTokenWeights
+        dailyInflowVolumeByTokenUSD
+        dailyOutflowVolumeByTokenUSD
       }
     }
     """
@@ -64,16 +71,18 @@ def fetch_gmx_composition_data():
     all_tokens_data = []
     for snapshot in snapshots:
         timestamp = snapshot['timestamp']
-        for weight, token in zip(snapshot['inputTokenWeights'], snapshot['inputTokens']):
+        for weight, token, inflow, outflow in zip(snapshot['inputTokenWeights'], snapshot['inputTokens'], snapshot['dailyInflowVolumeByTokenUSD'], snapshot['dailyOutflowVolumeByTokenUSD']):
             all_tokens_data.append({
                 'timestamp': timestamp,
                 'weight': weight,
+                'inflowUSD': inflow,
+                'outflowUSD': outflow,
                 'name': token['name'],
                 'symbol': token['symbol'],
                 'lastPriceUSD': token['lastPriceUSD']
             })
     data = pd.DataFrame(all_tokens_data)
-    data[['timestamp', 'weight','lastPriceUSD']] = data[['timestamp', 'weight','lastPriceUSD']].apply(pd.to_numeric, errors='coerce')
+    data[['timestamp', 'weight', 'inflowUSD', 'outflowUSD', 'lastPriceUSD']] = data[['timestamp', 'weight', 'inflowUSD', 'outflowUSD', 'lastPriceUSD']].apply(pd.to_numeric, errors='coerce')
     data['date'] = pd.to_datetime(data['timestamp'].astype(int), unit='s')
     data = data.sort_values(by='timestamp')
     data['weight'] = data.groupby('timestamp')['weight'].transform(lambda x: 100 * x / x.sum())
