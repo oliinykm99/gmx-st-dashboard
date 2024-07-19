@@ -4,7 +4,7 @@ This project utilizes Streamlit to create an interactive dashboard for GMX V1 da
 
 ## Overview
 
-The GMX V1 Dashboard is designed to provide insights and visualizations for the GMX V1 protocol. It fetches data via APIs or other sources, processes it, and presents it in a user-friendly interface using Streamlit.
+The GMX V1 Dashboard is designed to provide insights and visualizations for the GMX V1 protocol. It fetches data via GraphQL, processes it, and presents it in a user-friendly interface using Streamlit.
 
 ## Features
 
