@@ -16,6 +16,7 @@ def home():
     # Fetch Required Data
     data = fetch_gmx_data()
     composition_data = fetch_gmx_composition_data()
+    weth_price_data = fetch_uniswapv3_weth()
 
     current_tvl = "${:,.0f}".format(get_tvl(data, time_col='date', tvl_col='totalValueLockedUSD')[0])
     delta_tvl = "{:.2f}% (24h)".format(get_tvl(data, time_col='date', tvl_col='totalValueLockedUSD')[1])
@@ -72,7 +73,10 @@ def home():
                                  xaxis_title='', yaxis_title='Percent, %',
                                  title='Open Interest Longs VS Shorts Weighting',
                                  legend=True)
-    
+    with plot_cols[1]:
+        plot_general(weth_price_data, time_col='date',
+                     value_col='price', xlabel='',
+                     ylabel='USD, $', title='WETH Price', annotate=None)
                        
     
 

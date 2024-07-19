@@ -88,3 +88,37 @@ def fetch_gmx_composition_data():
     data['weight'] = data.groupby('timestamp')['weight'].transform(lambda x: 100 * x / x.sum())
 
     return data
+
+uni_url = f'https://gateway-arbitrum.network.thegraph.com/api/{api}/subgraphs/id/FbCGRftH4a3yZugY7TnbYgPJVEv2LvMT6oF1fxPe9aJM'
+@st.cache_data(ttl=86400)
+def fetch_uniswapv3_weth():
+    query = """
+    {
+      poolDayDatas(
+        first: 365
+        orderBy: date
+        where: {pool_: {id: "0xc6962004f452be9203591991d15f6b388e09e8d0"}}
+        orderDirection: desc
+      ) {
+        id
+        date
+        token1Price
+      }
+    }
+    """
+    response = requests.post(uni_url, json={'query': query})
+    data = response.json()
+    
+    records = []
+    for entry in data['data']['poolDayDatas']:
+        date = entry['date']
+        pool_id = entry['id']
+        pool_id, suffix = pool_id.split('-')
+        price_usd = float(entry['token1Price'])
+        records.append((date, pool_id, price_usd))
+    
+    data = pd.DataFrame(records, columns=['timestamp', 'pool', 'price'])
+    data['date'] = pd.to_datetime(data['timestamp'].astype(int), unit='s')
+    data = data.sort_values(by='timestamp')
+
+    return data
